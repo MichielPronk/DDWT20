@@ -239,7 +239,7 @@ function get_series_info($serie_id, $pdo){
  * @return array|string[]
  */
 
-function add_series($serie_info, $pdo, $amount)
+function add_series($serie_info, $pdo)
 {
     if (
         empty($serie_info['Name']) or
@@ -269,10 +269,13 @@ function add_series($serie_info, $pdo, $amount)
 
         ];
     }
-
+    $stmt = $pdo->prepare("SELECT MAX(id) from series");
+    $stmt->execute();
+    $max_id = $stmt -> fetch();
+    $max_id = htmlspecialchars((implode('|', $max_id)));
     $stmt = $pdo->prepare("INSERT INTO series (id, name, creator, seasons, abstract) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([
-        ($amount + 1),
+        (int) $max_id + 1,
         $serie_info['Name'],
         $serie_info['Creator'],
         $serie_info['Seasons'],
@@ -333,4 +336,22 @@ function update_series($pdo, $serie_info){
     }
 }
 
+function remove_series($pdo, $serie_id){
+    $serie_info = get_series_info($serie_id, $pdo);
+    $stmt = $pdo->prepare("DELETE FROM series WHERE id = ?");
+    $stmt->execute([$serie_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted == 1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Series '%s' was removed!", $serie_info['name'])
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. The series was not removed.'
+        ];
+    }
+}
 ?>

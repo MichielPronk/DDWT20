@@ -147,7 +147,7 @@ elseif (new_route('/DDWT20/week1/add/', 'post')) {
     $page_content = 'Fill in the details of you favorite series.';
     $submit_btn = "Add Series";
     $form_action = '/DDWT20/week1/add/';
-    $feedback = add_series($_POST, $db, $amount);
+    $feedback = add_series($_POST, $db);
     $error_msg = get_error($feedback);
 
     include use_template('new');
@@ -191,6 +191,8 @@ elseif (new_route('/DDWT20/week1/edit/', 'get')) {
 
 /* Edit serie POST */
 elseif (new_route('/DDWT20/week1/edit/', 'post')) {
+    $feedback = update_series($db, $_POST);
+    $error_msg = get_error($feedback);
     $serie_id = $_POST['serie_id'];
     /* Get series from db */
     $serie_info = get_series_info($serie_id, $db);
@@ -214,14 +216,14 @@ elseif (new_route('/DDWT20/week1/edit/', 'post')) {
     ]);
 
     /* Page content */
+
     $amount = count_series($db);
     $right_column = use_template('cards');
     $page_subtitle = sprintf("Information about %s", $serie_name);
     $page_content = $serie_info['abstract'];
     $submit_btn = "Edit Series";
     $form_action = '/DDWT20/week1/edit/';
-    $feedback = update_series($db, $_POST);
-    $error_msg = get_error($feedback);
+
 
 
     /* Choose Template */
@@ -232,7 +234,7 @@ elseif (new_route('/DDWT20/week1/edit/', 'post')) {
 elseif (new_route('/DDWT20/week1/remove/', 'post')) {
     /* Remove serie in database */
     $serie_id = $_POST['serie_id'];
-    $feedback = remove_serie($db, $serie_id);
+    $feedback = remove_series($db, $serie_id);
     $error_msg = get_error($feedback);
 
     /* Page info */
