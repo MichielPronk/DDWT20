@@ -34,36 +34,37 @@
                     <h5><?= $page_subtitle ?></h5>
                     <p><?= $page_content ?></p>
                     <!-- Put your form here -->
-                    <form action="/DDWT20/week1/add/" method="POST">
+                    <form action=<?= $form_action ?> method="POST">
                             <div class="form-group row">
                                 <label for="inputName" class="col-sm-2 col-formlabel">Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputName" name="Name" required>
+                                    <input value="<?php if (isset($serie_info)){echo $serie_info['name'];} ?>" type="text" class="form-control" id="inputName" name="Name">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="inputCreator" class="col-sm-2 col-formlabel">Creator</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputCreator" name="Creator" required>
+                                    <input value="<?php if (isset($serie_info)){echo $serie_info['creator'];} ?>" type="text" class="form-control" id="inputCreator" name="Creator">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="inputSeasons" class="col-sm-2 col-formlabel">Seasons</label>
                                 <div class="col-sm-10">
-                                    <input type="number" class="form-control" id="inputSeasons" name="Seasons" required>
+                                    <input value="<?php if (isset($serie_info)){echo $serie_info['seasons'];} ?>" type="text" class="form-control" id="inputSeasons" name="Seasons">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="inputAbstract" class="col-sm-2 col-formlabel">Abstract</label>
                                 <div class="col-sm-10">
-                                <textarea class="form-control" id="inputAbstract" name="Abstract" required> </textarea>
+                                <textarea class="form-control" id="inputAbstract" name="Abstract"><?php if (isset($serie_info)){echo $serie_info['abstract'];} ?></textarea>
                                 </div>
                             </div>
-                        <div class="form-group row">
-                            <div class="col-sm-10">
-                                <button type="submit" class="btn btn-primary"><?= $submit_btn ?></button>
+                            <?php if (isset($hidden_input)){echo $hidden_input;} ?>
+                            <div class="form-group row">
+                                <div class="col-sm-10">
+                                    <button type="submit" class="btn btn-primary"><?= $submit_btn ?></button>
+                                </div>
                             </div>
-                        </div>
                     </form>
                 </div>
 
@@ -73,7 +74,6 @@
                     <?php include $right_column ?>
 
                 </div>
-                <?php if(isset($error)){echo $error;} ?>
             </div>
         </div>
 

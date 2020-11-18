@@ -119,6 +119,16 @@ function get_error($feedback){
     return $error_exp;
 }
 
+function hidden_input($id){
+    $hidden_input = '
+       <div class="col-sm-10">
+           <input type="hidden" id="serie_id" name="serie_id" value='.$id;'>
+       </div>';
+    return $hidden_input;
+}
+
+
+
 /**
  * @param $host
  * @param $db
@@ -222,14 +232,15 @@ function get_series_info($serie_id, $pdo){
     return $serie_info_exp;
 }
 
+/**
+ * @param $serie_info
+ * @param $pdo
+ * @param $amount
+ * @return array|string[]
+ */
+
 function add_series($serie_info, $pdo, $amount)
 {
-    if (!is_numeric($serie_info['Seasons'])) {
-        return [
-            'type' => 'danger',
-            'message' => 'There was an error. You should enter a number in the field Seasons.'
-        ];
-    }
     if (
         empty($serie_info['Name']) or
         empty($serie_info['Creator']) or
@@ -239,6 +250,12 @@ function add_series($serie_info, $pdo, $amount)
         return [
             'type' => 'danger',
             'message' => 'There was an error. Not all fields were filled in.'
+        ];
+    }
+    if (!is_numeric($serie_info['Seasons'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You should enter a number in the field Seasons.'
         ];
     }
     $stmt = $pdo->prepare("SELECT COUNT(name) from series where name = ?");
@@ -252,6 +269,7 @@ function add_series($serie_info, $pdo, $amount)
 
         ];
     }
+
     $stmt = $pdo->prepare("INSERT INTO series (id, name, creator, seasons, abstract) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([
         ($amount + 1),
@@ -273,4 +291,46 @@ function add_series($serie_info, $pdo, $amount)
         ];
     }
 }
+
+function update_series($pdo, $serie_info){
+    if (
+        empty($serie_info['Name']) or
+        empty($serie_info['Creator']) or
+        empty($serie_info['Seasons']) or
+        empty($serie_info['Abstract'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all fields were filled in.'
+        ];
+    }
+    if (!is_numeric($serie_info['Seasons'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You should enter a number in the field Seasons.'
+        ];
+    }
+    $stmt = $pdo->prepare("UPDATE series SET name = ?, creator = ?, seasons = ?, abstract = ? WHERE id = ?");
+    $stmt->execute([
+        $serie_info['Name'],
+        $serie_info['Creator'],
+        $serie_info['Seasons'],
+        $serie_info['Abstract'],
+        $serie_info['serie_id']
+    ]);
+    $updated = $stmt->rowCount();
+    if ($updated == 1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Series '%s' was edited!", $serie_info['Name'])
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'The series was not edited. No changes were detected'
+        ];
+    }
+}
+
 ?>

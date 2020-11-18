@@ -148,19 +148,20 @@ elseif (new_route('/DDWT20/week1/add/', 'post')) {
     $submit_btn = "Add Series";
     $form_action = '/DDWT20/week1/add/';
     $feedback = add_series($_POST, $db, $amount);
-    $error = get_error($feedback);
-
+    $error_msg = get_error($feedback);
 
     include use_template('new');
 }
 
 /* Edit serie GET */
 elseif (new_route('/DDWT20/week1/edit/', 'get')) {
-    /* Get serie info from db */
-    $serie_name = 'House of Cards';
-    $serie_abstract = 'A Congressman works with his equally conniving wife to exact revenge on the people who betrayed him.';
-    $nbr_seasons = '6';
-    $creators = 'Beau Willimon';
+    $serie_id = $_GET['serie_id'];
+    /* Get series from db */
+    $serie_info = get_series_info($serie_id, $db);
+    $serie_name = $serie_info['name'];
+    $serie_abstract = $serie_info['abstract'];
+    $nbr_seasons = $serie_info['seasons'];
+    $creators = $serie_info['creator'];
 
     /* Page info */
     $page_title = 'Edit Series';
@@ -180,6 +181,9 @@ elseif (new_route('/DDWT20/week1/edit/', 'get')) {
     $right_column = use_template('cards');
     $page_subtitle = sprintf("Edit %s", $serie_name);
     $page_content = 'Edit the series below.';
+    $submit_btn = "Edit Series";
+    $form_action = '/DDWT20/week1/edit/';
+    $hidden_input = hidden_input($serie_id);
 
     /* Choose Template */
     include use_template('new');
@@ -187,11 +191,13 @@ elseif (new_route('/DDWT20/week1/edit/', 'get')) {
 
 /* Edit serie POST */
 elseif (new_route('/DDWT20/week1/edit/', 'post')) {
-    /* Get serie info from db */
-    $serie_name = 'House of Cards';
-    $serie_abstract = 'A Congressman works with his equally conniving wife to exact revenge on the people who betrayed him.';
-    $nbr_seasons = '6';
-    $creators = 'Beau Willimon';
+    $serie_id = $_POST['serie_id'];
+    /* Get series from db */
+    $serie_info = get_series_info($serie_id, $db);
+    $serie_name = $serie_info['name'];
+    $serie_abstract = $serie_info['abstract'];
+    $nbr_seasons = $serie_info['seasons'];
+    $creators = $serie_info['creator'];
 
     /* Page info */
     $page_title = $serie_info['name'];
@@ -212,6 +218,11 @@ elseif (new_route('/DDWT20/week1/edit/', 'post')) {
     $right_column = use_template('cards');
     $page_subtitle = sprintf("Information about %s", $serie_name);
     $page_content = $serie_info['abstract'];
+    $submit_btn = "Edit Series";
+    $form_action = '/DDWT20/week1/edit/';
+    $feedback = update_series($db, $_POST);
+    $error_msg = get_error($feedback);
+
 
     /* Choose Template */
     include use_template('serie');
