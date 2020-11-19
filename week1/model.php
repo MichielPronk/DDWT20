@@ -119,10 +119,16 @@ function get_error($feedback){
     return $error_exp;
 }
 
+/**
+ * Creates a hidden input form where the id of a series is placed
+ * @param $id string containing the id of a series
+ * @return string A string of HTML code
+ */
+
 function hidden_input($id){
     $hidden_input = '
        <div class="col-sm-10">
-           <input type="hidden" id="serie_id" name="serie_id" value='.$id;'>
+           <input type="hidden" id="serie_id" name="serie_id" value='.$id.'>
        </div>';
     return $hidden_input;
 }
@@ -130,6 +136,7 @@ function hidden_input($id){
 
 
 /**
+ * Connects the database to the website
  * @param $host
  * @param $db
  * @param $user
@@ -155,8 +162,9 @@ function connect_db($host, $db, $user, $pass)
 
 
 /**
- * @param $pdo
- * @return string
+ * Counts the number of series in the database
+ * @param $pdo DatabaseObject database
+ * @return string The number of series in the database
  */
 
 function count_series($pdo)
@@ -168,8 +176,9 @@ function count_series($pdo)
 }
 
 /**
- * @param $pdo
- * @return array
+ * Gets all information on all series
+ * @param $pdo Database
+ * @return array Information of all series
  */
 
 function get_series($pdo){
@@ -187,8 +196,9 @@ function get_series($pdo){
 }
 
 /**
- * @param $series
- * @return string
+ * Creates a table of the series in the database
+ * @param $series array containing all series
+ * @return string of HTML code containing a table
  */
 function get_serie_table($series){
     $table_exp = '
@@ -216,9 +226,10 @@ function get_serie_table($series){
 }
 
 /**
- * @param $serie_id
- * @param $pdo
- * @return array
+ * Gets the information of a single series
+ * @param $serie_id string the id of the series we want information of
+ * @param $pdo database The database
+ * @return array containing the information of a series
  */
 
 function get_series_info($serie_id, $pdo){
@@ -233,10 +244,10 @@ function get_series_info($serie_id, $pdo){
 }
 
 /**
- * @param $serie_info
- * @param $pdo
- * @param $amount
- * @return array|string[]
+ * Adds series to database
+ * @param $serie_info array containing information of series we want to add
+ * @param $pdo database
+ * @return array|string[] an array containing a message type and a message
  */
 
 function add_series($serie_info, $pdo)
@@ -295,6 +306,13 @@ function add_series($serie_info, $pdo)
     }
 }
 
+/**
+ * Updates the information of a series in the database
+ * @param $pdo database
+ * @param $serie_info array containing the updated information of the series we want to change
+ * @return array|string[] an array containing a message type and a message
+ */
+
 function update_series($pdo, $serie_info){
     if (
         empty($serie_info['Name']) or
@@ -335,6 +353,13 @@ function update_series($pdo, $serie_info){
         ];
     }
 }
+
+/**
+ * Removes a series from the database
+ * @param $pdo database
+ * @param $serie_id string containing the id of the series we want to delete
+ * @return array|string[] an array containing a message type and a message
+ */
 
 function remove_series($pdo, $serie_id){
     $serie_info = get_series_info($serie_id, $pdo);
