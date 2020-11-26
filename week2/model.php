@@ -226,6 +226,7 @@ function get_error($feedback){
  */
 function add_serie($pdo, $serie_info){
     /* Check if all fields are set */
+
     if (
         empty($serie_info['Name']) or
         empty($serie_info['Creator']) or
@@ -237,6 +238,7 @@ function add_serie($pdo, $serie_info){
             'message' => 'There was an error. Not all fields were filled in.'
         ];
     }
+
 
     /* Check data type */
     $user_id = $_SESSION['user_id'];
@@ -293,13 +295,13 @@ function add_serie($pdo, $serie_info){
  * @return array
  */
 function update_serie($pdo, $serie_info){
-    if (!check_login()) {
-        return [
-            'type' => 'danger',
-            'message' => 'You are not authorized to edit this serie'
-        ];
-    }
     /* Check if all fields are set */
+    if ($serie_info['user'] == $_SESSION['user_id']){
+        $display_buttons = True;
+    } else {
+        $display_buttons = False;
+    }
+
     if (
         empty($serie_info['Name']) or
         empty($serie_info['Creator']) or
@@ -339,7 +341,7 @@ function update_serie($pdo, $serie_info){
             'message' => sprintf("The name of the series cannot be changed. %s already exists.", $serie_info['Name'])
         ];
     }
-
+    if($display_buttons == True){
     /* Update Serie */
     $stmt = $pdo->prepare("UPDATE series SET name = ?, creator = ?, seasons = ?, abstract = ? WHERE id = ?");
     $stmt->execute([
@@ -361,6 +363,11 @@ function update_serie($pdo, $serie_info){
             'type' => 'warning',
             'message' => 'The series was not edited. No changes were detected.'
         ];
+    }} else {
+        return [
+            'type' => 'warning',
+            'message' => 'You are not authorized to edit this series'
+        ];
     }
 }
 
@@ -370,30 +377,38 @@ function update_serie($pdo, $serie_info){
  * @param int $serie_id id of the to be deleted series
  * @return array
  */
-function remove_serie($pdo, $serie_id){
-    /* Get series info */
-    if (!check_login()) {
-        return [
-            'type' => 'danger',
-            'message' => 'You are not authorized to remove this serie'
-        ];
-    }
+function remove_serie($pdo, $serie_id)
+{
     $serie_info = get_serieinfo($pdo, $serie_id);
+    if ($serie_info['user'] == $_SESSION['user_id']) {
+        $display_buttons = True;
+    } else {
+        $display_buttons = False;
+    }
+
 
     /* Delete Serie */
-    $stmt = $pdo->prepare("DELETE FROM series WHERE id = ?");
-    $stmt->execute([$serie_id]);
-    $deleted = $stmt->rowCount();
-    if ($deleted ==  1) {
-        return [
-            'type' => 'success',
-            'message' => sprintf("Series '%s' was removed!", $serie_info['name'])
-        ];
+    if ($display_buttons == True) {
+        $stmt = $pdo->prepare("DELETE FROM series WHERE id = ?");
+        $stmt->execute([$serie_id]);
+        $deleted = $stmt->rowCount();
+        if ($deleted == 1) {
+            return [
+                'type' => 'success',
+                'message' => sprintf("Series '%s' was removed!", $serie_info['name'])
+            ];
+        }
+         else {
+            return [
+                'type' => 'warning',
+                'message' => 'An error occurred. The series was not removed.'
+            ];
+        }
     }
     else {
         return [
             'type' => 'warning',
-            'message' => 'An error occurred. The series was not removed.'
+            'message' => 'You are not authorized to remove this series'
         ];
     }
 }
@@ -433,6 +448,11 @@ function get_user_id(){
     }
 }
 
+/**
+ * @param $pdo database
+ * @param $user_id string user id of the creator of a series
+ * @return string containing the first and lastname of the user
+ */
 function get_name($pdo, $user_id){
     $stmt = $pdo->prepare('SELECT firstname, lastname FROM users WHERE id = ?');
     $stmt->execute([$user_id]);
@@ -444,12 +464,23 @@ function get_name($pdo, $user_id){
     return $name;
 }
 
+/**
+ * @param $pdo database
+ * @return mixed the number of users in the database
+ */
+
 function count_users($pdo){
     $stmt = $pdo->prepare('SELECT * FROM users');
     $stmt->execute();
     $users = $stmt->rowCount();
     return $users;
 }
+
+/**
+ * @param $pdo
+ * @param $form_data array containing the information of a new user
+ * @return array|string[] the error type and message for the error
+ */
 
 function register_user($pdo, $form_data){
     /* Check if all fields are set */
@@ -508,11 +539,17 @@ function register_user($pdo, $form_data){
     $_SESSION['user_id'] = $user_id;
     $feedback = [
         'type' => 'success',
-        'message' => sprintf('%s, your account was successfully created!',  get_username($pdo, $_SESSION['user_id']))
+        'message' => sprintf('%s, your account was successfully created!',  htmlspecialchars(get_username($pdo, $_SESSION['user_id'])))
     ];
     redirect(sprintf('/DDWT20/week2/myaccount/?error_msg=%s',
         json_encode($feedback)));
 }
+
+/**
+ * @param $pdo database
+ * @param $form_data array containing login information of a user
+ * @return array|string[] the error type and message for the error
+ */
 
 function login_user($pdo, $form_data){
     if (
@@ -553,12 +590,18 @@ function login_user($pdo, $form_data){
         $feedback = [
             'type' => 'success',
             'message' => sprintf('%s, you were logged in successfully!',
-                $form_data['username'])
+                htmlspecialchars($form_data['username']))
         ];
         redirect(sprintf('/DDWT20/week2/myaccount/?error_msg=%s',
             json_encode($feedback)));
     }
 }
+
+/**
+ * @param $pdo database
+ * @param $id string the id of a user whose username we want
+ * @return string the username
+ */
 
 function get_username($pdo, $id){
     $stmt = $pdo->prepare('SELECT username FROM users WHERE id = ?');
@@ -571,6 +614,10 @@ function get_username($pdo, $id){
     return htmlspecialchars($username_string);
 }
 
+/**
+ * @return bool
+ */
+
 function check_login(){
     session_start();
     if (isset($_SESSION['user_id'])){
@@ -580,6 +627,10 @@ function check_login(){
     }
 }
 
+/**
+ * @return int|mixed returns the id of the active user if not active it returns 0
+ */
+
 function get_current(){
     if (check_login()){
         return $_SESSION['user_id'];
@@ -587,6 +638,10 @@ function get_current(){
         return 0;
     }
 }
+
+/**
+ * @return string[] the error type and message for the error
+ */
 
 function logout_user(){
     session_destroy();
@@ -601,7 +656,7 @@ function logout_user(){
     if (isset($_SESSION['user_id'])){
         return [
             'type' => 'danger',
-        'message' => 'You were not logged out'
+            'message' => 'You were not logged out'
             ];
     }
     return [

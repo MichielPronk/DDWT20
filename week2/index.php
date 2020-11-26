@@ -88,6 +88,7 @@ elseif (new_route('/DDWT20/week2/serie/', 'get')) {
         $display_buttons = False;
     }
 
+
     /* Page info */
     $page_title = $serie_info['name'];
     $breadcrumbs = get_breadcrumbs([
@@ -148,7 +149,7 @@ elseif (new_route('/DDWT20/week2/add/', 'post')) {
     $feedback = add_serie($db, $_POST);
     /* Redirect to serie GET route */
     redirect(sprintf('/DDWT20/week2/add/?error_msg=%s',
-        json_encode($feedback)));
+        urlencode(json_encode($feedback))));
 }
 
 /* Edit serie GET */
@@ -188,7 +189,7 @@ elseif (new_route('/DDWT20/week2/edit/', 'post')) {
     $serie_id = $_POST['serie_id'];
     /* Redirect to serie GET route */
     redirect(sprintf('/DDWT20/week2/serie/?serie_id=%s&error_msg=%s',
-        json_encode(intval($serie_id)), json_encode($feedback)));
+        urlencode(json_encode(intval($serie_id))), urlencode(json_encode($feedback))));
 }
 
 /* Remove serie */
@@ -201,7 +202,7 @@ elseif (new_route('/DDWT20/week2/remove/', 'post')) {
     $error_msg = get_error($feedback);
     /* Redirect to serie GET route */
     redirect(sprintf('/DDWT20/week2/overview/?serie_id=%s&error_msg=%s',
-        json_encode(intval($serie_id)), json_encode($feedback)));
+        urlencode(json_encode(intval($serie_id))), urlencode(json_encode($feedback))));
 
 }
 /* User Authentication*/
@@ -253,7 +254,7 @@ elseif (new_route('/DDWT20/week2/register/', 'get')){
 elseif (new_route('/DDWT20/week2/register/', 'post')) {
     $error_msg = register_user($db, $_POST);
     redirect(sprintf('/DDWT20/week2/register/?error_msg=%s',
-        json_encode($error_msg)));
+        urlencode(json_encode($error_msg))));
 
 }
 
@@ -282,7 +283,7 @@ elseif (new_route('/DDWT20/week2/login/', 'get')){
 elseif (new_route('/DDWT20/week2/login/', 'post')) {
     $error_msg = login_user($db, $_POST);
     redirect(sprintf('/DDWT20/week2/login/?error_msg=%s',
-        json_encode($error_msg)));
+        urlencode(json_encode($error_msg))));
 }
 
 /* logout get */
@@ -290,5 +291,5 @@ elseif (new_route('/DDWT20/week2/logout/', 'get')) {
     session_destroy();
     $error_msg = logout_user();
     redirect(sprintf('/DDWT20/week2/?error_msg=%s',
-        json_encode($error_msg)));
+        urlencode(json_encode($error_msg))));
 }

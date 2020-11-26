@@ -59,6 +59,7 @@
                             </div>
                         </div>
                         <?php if(isset($serie_id)){ ?><input type="hidden" name="serie_id" value="<?php echo $serie_id ?>"><?php } ?>
+                        <?php if(isset($serie_info)){ ?><input type="hidden" name="user" value="<?php echo $serie_info['user'] ?>"><?php }?>
                         <div class="form-group row">
                             <div class="col-sm-10">
                                 <button type="submit" class="btn btn-primary"><?= $submit_btn ?></button>
