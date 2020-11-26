@@ -222,7 +222,7 @@ elseif (new_route('/DDWT20/week2/myaccount/', 'get')) {
 
     /* Page content */
     $page_subtitle = 'Here you can view your favorite series';
-    $page_content = ':)';
+    $page_content = 'Welcome to series overview, here you can share your favorite series!';
 
     /* Get error msg from POST route */
     if ( isset($_GET['error_msg']) ) {
