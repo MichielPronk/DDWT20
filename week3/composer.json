@@ -1,15 +1,16 @@
 {
-  "name": "MichielPronk/DDWT20/week3",
+  "name": "michielpronk/ddwt20_week3",
   "description": "",
   "minimum-stability": "stable",
   "license": "proprietary",
   "authors": [
     {
-      "name": "Michiel Pronk",
+      "name": "MichielPronk",
       "email": "m.t.pronk@student.rug.nl"
     }
   ],
   "require": {
+    "bramus/router": "1.5"
 
   }
 }
