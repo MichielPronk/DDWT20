@@ -1,0 +1,14 @@
+{
+  "name": "MichielPronk/DDWT20/week3",
+  "description": "",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Michiel Pronk",
+      "email": "m.t.pronk@student.rug.nl"
+    }
+  ],
+  "require": {
+  }
+}
