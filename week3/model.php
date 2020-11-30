@@ -282,4 +282,8 @@ function check_cred($cred){
         }
     }
 }
+
+function http_content_type($content_type){
+    return ('Content-Type: '.$content_type);
+}
 ?>
