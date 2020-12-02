@@ -259,12 +259,23 @@ function redirect($location){
     die();
 }
 
+/**
+ * @param $username string containing the username
+ * @param $password string containing the password
+ * @return array containing the username and password
+ */
+
 function set_cred($username, $password){
     return [
         'username'=> $username,
         'password'=> $password
     ];
 }
+
+/**
+ * @param $cred array containing the credential information
+ * @return bool telling if authentication succeeded
+ */
 
 function check_cred($cred){
     if (!isset($_SERVER['PHP_AUTH_USER'])){
@@ -283,6 +294,10 @@ function check_cred($cred){
     }
 }
 
+/**
+ * @param $content_type
+ * @return string containing the content type of the api
+ */
 function http_content_type($content_type){
     return ('Content-Type: '.$content_type);
 }
